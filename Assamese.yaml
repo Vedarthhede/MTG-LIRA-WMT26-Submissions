@@ -1,0 +1,96 @@
+
+src_vocab: /nlsasfs/home/bhasngrh/vedhe/All_Languages/low_resource/en-il/vocab/vocab.src
+tgt_vocab: /nlsasfs/home/bhasngrh/vedhe/All_Languages/low_resource/en-il/vocab/vocab.tgt 
+share_vocab: false
+
+train_from: /nlsasfs/home/bhasngrh/vedhe/All_Languages/low_resource/en-il/model_checkpoint_step_500000.pt
+# Corpus opts:
+data:
+    assamese:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-As/bpe_codes/bpe_LR_finetuning/train.en 
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-As/bpe_codes/bpe_LR_finetuning/train.as
+        weight: 1.2
+        transforms: [filtertoolong]
+
+    valid:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-As/bpe_codes/bpe_LR_finetuning/valid.en
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-As/bpe_codes/bpe_LR_finetuning/valid.as
+
+#### Filter
+src_seq_length: 256
+tgt_seq_length: 256
+src_seq_length_trunc: 512  
+tgt_seq_length_trunc: 512
+src_vocab_size: 50000
+tgt_vocab_size: 50000
+vocab_sample_size: -1
+skip_empty_level: silent
+
+world_size: 4
+gpu_ranks: [0,1, 2, 3]
+timeout: 3600
+
+log_file: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-As/training/logs/low_resource_assamese.log
+
+# General opts
+save_model: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-As/training/LR_finetuning/model
+keep_checkpoint: 10
+save_checkpoint_steps: 2000 
+average_decay: 0.0005
+seed: 1234
+report_every: 500 
+train_steps: 600000
+valid_steps: 2000
+
+
+# Batching
+queue_size: 10000 
+bucket_size: 32768 
+num_workers: 8      
+prefetch_factor: 8   
+batch_type: "tokens"
+batch_size: 4096 
+valid_batch_size: 1024 
+batch_size_multiple: 1
+vocab_size_multiple: 8
+max_generator_batches: 0
+accum_count: [8] 
+adam_beta1: 0.9
+adam_beta2: 0.998
+accum_steps: [0]
+
+# Early Stopping
+early_stopping: 5
+early_stopping_criteria: ppl 
+
+# Optimization
+apex_opt_level: "" 
+precision: bf16 
+optim: "adam"
+learning_rate: 0.0001
+warmup_steps: 500
+hidden_size: 512      
+embedding_dim: 512    
+decay_method: noam   
+max_grad_norm: 1.0
+label_smoothing: 0.05
+param_init: 0
+param_init_glorot: 'true'
+position_encoding: 'true'
+normalization: "tokens"
+self_attn_type: "scaled-dot" 
+pos_ffn_activation_fn: "gelu"
+
+# Model
+encoder_type: transformer
+decoder_type: transformer
+enc_layers: 6
+dec_layers: 6
+heads: 8
+rnn_size: 512
+word_vec_size: 512 
+transformer_ff: 2048
+dropout: [0.1]
+attention_dropout: [0.1]
+tensorboard: true
+tensorboard_log_dir: "runs/"

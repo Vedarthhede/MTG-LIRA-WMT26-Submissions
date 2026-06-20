@@ -1,0 +1,99 @@
+
+save_data: /nlsasfs/home/bhasngrh/vedhe/All_Languages/low_resource/en-il/vocab/data
+
+src_vocab: /nlsasfs/home/bhasngrh/vedhe/All_Languages/low_resource/en-il/vocab/vocab.src 
+tgt_vocab: /nlsasfs/home/bhasngrh/vedhe/All_Languages/low_resource/en-il/vocab/vocab.tgt 
+share_vocab: false
+
+train_from: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-Brx/training/finetuned_LR_model/model__step_1000.pt
+
+data:
+    bodo:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-Brx/bpe_codes/final_train.bpe.en 
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-Brx/bpe_codes/final_train.bpe.brx 
+        weight: 1.0
+        transforms: [filtertoolong]
+
+    valid:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-Brx/bpe_codes/final_valid.bpe.en
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-Brx/bpe_codes/final_valid.bpe.brx
+
+#### Filter
+src_seq_length: 256
+tgt_seq_length: 512
+src_seq_length_trunc: 256   
+tgt_seq_length_trunc: 256
+src_vocab_size: 50000
+tgt_vocab_size: 50000
+vocab_sample_size: -1
+
+skip_empty_level: silent
+
+world_size: 3
+gpu_ranks: [0,1, 2]
+timeout: 3600
+
+log_file: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-Brx/training/logs/finetuning_LR_model.log
+
+
+save_model: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/En-Brx/training/finetuned_LR_model/model_
+keep_checkpoint: 10
+save_checkpoint_steps: 1000 
+seed: 1234
+report_every: 100 
+train_steps: 50000
+valid_steps: 1000
+
+
+
+# Batching
+queue_size: 10000 
+bucket_size: 32768 
+num_workers: 8       
+prefetch_factor: 2   
+batch_type: "tokens"
+batch_size: 4096 
+valid_batch_size: 1024 
+batch_size_multiple: 8
+vocab_size_multiple: 8
+accum_count: [1] 
+adam_beta1: 0.9
+adam_beta2: 0.998
+reset_optim: "all"
+freeze_encoder: true
+
+# Early Stopping
+early_stopping: 5
+early_stopping_criteria: ppl 
+
+# Optimization
+apex_opt_level: "" 
+precision: bf16 #--> only use this if onmt version is 3.0.1 or above
+optim: "adam"
+learning_rate: 0.0002
+warmup_steps: 0
+hidden_size: 512    
+embedding_dim: 512    
+decay_method: none   
+max_grad_norm: 1.0
+label_smoothing: 0.1
+param_init: 0
+param_init_glorot: 'true'
+position_encoding: 'true'
+normalization: "tokens"
+self_attn_type: "scaled-dot" 
+pos_ffn_activation_fn: "gelu"
+
+# Model
+encoder_type: transformer
+decoder_type: transformer
+enc_layers: 6
+dec_layers: 6
+heads: 8
+rnn_size: 512
+word_vec_size: 512 
+transformer_ff: 2048
+dropout: [0.1]
+attention_dropout: [0.1]
+tensorboard: true
+tensorboard_log_dir: "runs/"

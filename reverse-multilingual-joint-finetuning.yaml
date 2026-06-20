@@ -1,0 +1,138 @@
+
+save_data: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/vocab
+src_vocab: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/vocab/vocab.src 
+tgt_vocab: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/vocab/vocab.src
+share_vocab: true
+
+data:
+    karbi:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/karbi/train.bpe.mjw
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/karbi/train.bpe.en
+        weight: 3.0
+        transforms: [filtertoolong]
+    khasi:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/khasi/train.bpe.kha
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/khasi/train.bpe.en
+        weight: 1.5
+        transforms: [filtertoolong]
+    nagamese:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/nagamese/train.bpe.nag
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/nagamese/train.bpe.en
+        weight: 8.0
+        transforms: [filtertoolong]
+    nyishi:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/nyishi/train.bpe.njz
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/nyishi/train.bpe.en
+        weight: 1.0
+        transforms: [filtertoolong]
+    tagin:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/tagin/train.bpe.tgj
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/tagin/train.bpe.en
+        weight: 5.0
+        transforms: [filtertoolong]
+    tripuri:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/tripuri/train.bpe.trp
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/tripuri/train.bpe.en
+        weight: 8.0
+        transforms: [filtertoolong]
+    Mizo:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/mizo/train.bpe.lus
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/mizo/train.bpe.en
+        weight: 1.0
+        transforms: [filtertoolong]
+    valid:
+        path_src: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/combined-valid.bpe.il
+        path_tgt: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/bpe_codes/combined-valid.bpe.en
+        transforms: [filtertoolong]
+
+#### Filter
+src_seq_length: 512
+tgt_seq_length: 512
+src_seq_length_trunc: 512   
+tgt_seq_length_trunc: 512
+src_vocab_size: 48000
+tgt_vocab_size: 48000
+src_subword_type: none
+tgt_subword_type: none
+vocab_sample_size: -1
+#reset_optimizer: true  
+# silently ignore empty lines in the data
+skip_empty_level: silent
+#reset_optim: all
+
+# Train on a single GPU
+world_size: 4
+gpu_ranks: [0, 1, 2, 3]
+timeout: 3600
+
+log_file: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/training/logs/reverse-joint-finetuning.log
+
+# General opts
+save_model: /nlsasfs/home/bhasngrh/vedhe/WMT2026/Indic-LR/joint_fineftuning/reverse/training/model/model_
+keep_checkpoint: 10
+save_checkpoint_steps: 2000 #50000
+#average_decay: 0.0005
+seed: 1234
+report_every: 500 #5000
+train_steps: 300000
+valid_steps: 2000
+
+
+# Batching
+queue_size: 8000 
+bucket_size: 32768 
+num_workers: 4     
+prefetch_factor: 2    ########comment this out when num workers are 0.
+#bucket_size: 32768
+batch_type: "tokens"
+batch_size: 2048 
+valid_batch_size: 512 
+batch_size_multiple: 8
+vocab_size_multiple: 8
+max_generator_batches: 0
+accum_count: [4] #original:32
+adam_beta1: 0.9
+adam_beta2: 0.998
+
+
+# Early Stopping
+early_stopping: 5
+early_stopping_criteria: ppl 
+
+# Optimization
+apex_opt_level: "" 
+#model_dtype: fp32    
+#model_dtype: fp16
+precision: bf16 #--> only use this if onmt version is 3.0.1 or above
+optim: "adam"
+learning_rate: 1.0 # 2
+warmup_steps: 4000
+hidden_size: 512       
+embedding_dim: 512    
+decay_method: "noam" 
+max_grad_norm: 1.0
+label_smoothing: 0.1
+param_init: 0
+param_init_glorot: 'true'
+position_encoding: 'true'
+normalization: "tokens"
+self_attn_type: "scaled-dot"  # or "average"  
+pos_ffn_activation_fn: "gelu"
+
+# Model
+encoder_type: transformer
+decoder_type: transformer
+enc_layers: 6
+dec_layers: 6
+heads: 8
+rnn_size: 512
+word_vec_size: 512 #-1
+transformer_ff: 2048
+#freeze_encoder: true 
+#dropout_steps: [0]
+dropout: [0.1]
+attention_dropout: [0.1]
+# share_decoder_embeddings: true
+# share_embeddings: true
+tensorboard: true
+tensorboard_log_dir: "runs/"
